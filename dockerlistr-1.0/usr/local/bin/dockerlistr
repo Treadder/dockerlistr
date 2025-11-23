@@ -1,0 +1,61 @@
+#!/bin/bash
+sudo docker ps --format '{{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}' \
+| awk -F'\t' -v w1=14 -v w2=40 -v w3=22 -v w4=50 '
+BEGIN {
+  # Set the field separator for input to be a tab
+  # header
+  printf "+-%-*s-+-%-*s-+-%-*s-+-%-*s-+\n", w1, "", w2, "", w3, "", w4, "";
+  printf "| %-*s | %-*s | %-*s | %-*s |\n",
+          w1, "ID", w2, "Name", w3, "Status", w4, "Ports"; # Header changed to Name
+  printf "+-%-*s-+-%-*s-+-%-*s-+-%-*s-+\n", w1, "", w2, "", w3, "", w4, "";
+}
+{
+  id=$1; name=$2; status=$3; ports=$4; # Variable name changed to 'name'
+  
+  # Split the Ports field by ", " to process each port mapping individually
+  split(ports, port_array, ", ");
+  
+  max_port_lines = length(port_array);
+
+  # Find the maximum number of lines for non-port fields by simulating the wrapping.
+  max_non_port_lines = 1; 
+  temp_id = id; temp_name = name; temp_status = status; # Use 'temp_name'
+  i = 0;
+  while (temp_id!="" || temp_name!="" || temp_status!="") {
+    i++;
+    temp_id=substr(temp_id,w1+1);
+    temp_name=substr(temp_name,w2+1); # Use 'temp_name'
+    temp_status=substr(temp_status,w3+1);
+  }
+  max_non_port_lines = (i > 0) ? i : 1; 
+  
+  total_lines = (max_port_lines > max_non_port_lines) ? max_port_lines : max_non_port_lines;
+
+  # Iterate for the total number of lines required for this row block
+  for (j=1; j<=total_lines; j++) {
+    
+    # Get the portion of the field for the current line
+    current_id = substr(id,1,w1);
+    current_name = substr(name,1,w2); # Use 'current_name'
+    current_status = substr(status,1,w3);
+    
+    # Get the port mapping for the current line from the array, or an empty string if weve run out of ports
+    current_port = (j <= max_port_lines) ? port_array[j] : "";
+
+    # Print the line
+    printf "| %-*s | %-*s | %-*s | %-*s |\n",
+             w1, current_id,
+             w2, current_name, # Print 'current_name'
+             w3, current_status,
+             w4, current_port;
+
+    # Advance the remaining strings for wrapping in the next iteration
+    id=substr(id,w1+1);
+    name=substr(name,w2+1); # Advance 'name'
+    status=substr(status,w3+1);
+  }
+
+  # row separator
+  printf "+-%-*s-+-%-*s-+-%-*s-+-%-*s-+\n", w1, "", w2, "", w3, "", w4, "";
+}
+'

@@ -1,0 +1,8 @@
+Package: dockerlistr
+Version: 1.0
+Section: utils
+Priority: optional
+Architecture: all
+Maintainer: Jared Kelnhofer <sawredjet@gmail.com>
+Description: Lists running Docker container information with improved formatting.
+Depends: docker-ce | docker.io, awk, sudo
