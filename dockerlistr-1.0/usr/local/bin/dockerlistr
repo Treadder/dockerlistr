@@ -1,4 +1,26 @@
 #!/bin/bash
+check_cmd() {
+    if ! command -v "$1" &> /dev/null
+    then
+        echo "Error: Required command '$1' not found." >&2
+        echo "Please ensure the dependency '$2' is installed." >&2
+        exit 1
+    fi
+}
+
+check_cmd docker "docker-ce or docker.io"
+check_cmd awk "awk"
+
+echo "Running sudo validation. Please enter your password if prompted:"
+if ! sudo -v; then
+    echo "Error: SUDO authentication failed or canceled." >&2
+    exit 1
+fi
+
+echo "SUDO credentials validated. Proceeding with 'sudo docker ps'."
+
+# --- Main Command Execution ---
+# Pipe 'sudo docker ps' output to awk for formatting
 sudo docker ps --format '{{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}' \
 | awk -F'\t' -v w1=14 -v w2=40 -v w3=22 -v w4=50 '
 BEGIN {
