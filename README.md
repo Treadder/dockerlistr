@@ -1,3 +1,5 @@
+### Info
+
 - Code lives in `/usr/local/bin/dockerlistr`
 - Provides a command `dockerlistr` to list running Docker containers with formatted output
 
