@@ -11,6 +11,27 @@ check_cmd() {
 check_cmd docker "docker-ce or docker.io"
 check_cmd awk "awk"
 
+# --- Argument Parsing for Extra Commands ---
+if [[ "$1" == "--shell" && -n "$2" ]]; then
+  container_id="$2"
+  echo "Attempting to open shell in container: $container_id"
+  # Try /bin/sh first
+  if sudo docker exec -it "$container_id" /bin/sh; then
+    exit 0
+  else
+    echo "'/bin/sh' not available, trying '/bin/bash'..."
+    sudo docker exec -it "$container_id" /bin/bash
+    exit $?
+  fi
+fi
+
+if [[ "$1" == "--netstat" && -n "$2" ]]; then
+  container_id="$2"
+  echo "Running netstat in container: $container_id"
+  sudo docker exec "$container_id" netstat -tulpn
+  exit $?
+fi
+
 echo "Running sudo validation. Please enter your password if prompted:"
 if ! sudo -v; then
     echo "Error: SUDO authentication failed or canceled." >&2
