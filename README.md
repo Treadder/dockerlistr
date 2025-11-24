@@ -2,7 +2,7 @@
 
 - Provides a command `dockerlistr` to list running Docker containers with formatted output
 - Optionally allows you to open a shell on a specified container
-- Optionally allows you to display network statistics for a specified container
+- Optionally allows you to display internal network statistics for a specified container
 
 ![Usage Example](usage.png)
 
@@ -17,4 +17,4 @@
 
 - `dockerlistr`: Lists running Docker containers in a formatted table
 - `dockerlistr` --shell <container_id>: Opens a shell in the specified Docker container
-- `dockerlistr` --netstat <container_id>: Displays network statistics for the specified Docker container
+- `dockerlistr` --netstat <container_id>: Displays internal network statistics for the specified Docker container
